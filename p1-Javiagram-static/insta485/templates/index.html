@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>insta485</title>
+    <link rel="stylesheet" href="css/style.css/style.css">
+  </head>
+  <body>
+    <div class="Insta-Header">
+      <a href="/"><img class="insta-logo" src="/images/Instagram-2018-Logo-Vector.png"></a>
+      <p class="explore-user"> <a href="/explore/index.html">explore</a> | <a href="/users/{{logname}}/">{{logname}}</a></p>
+    </div>
+
+    {% for section in posts %}
+    <div class="post">
+      <div class="userpost">
+        <img class="user-profile" src="{{section.owner_img_url}}">
+        <p class="post-username">
+          <a href="/users/{{section.owner}}/">{{section.owner}}</a>
+        </p>
+        <a href="/posts/{{section.postid}}/">
+          <p class="post-time">{{section.timestamp}}</p>          
+        </a>        
+      </div>
+      <img class="post-image" src="{{section.img_url}}">
+
+
+      <p class="display-likes">{{section.likes}} {{'likes' if section.likes != 1 else 'like'}}</p>
+
+      {% for unique_comment in section.comments %}
+      <div class="user-comment">
+        <div class="comment-username">{{ unique_comment.owner }}</div>
+        <div class="comment-type">{{ unique_comment.text }}</div>
+      </div>
+      {% endfor %}
+
+    </div>
+    {% endfor %}
+
+  </body>
+</html>

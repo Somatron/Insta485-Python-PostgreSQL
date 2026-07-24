@@ -1,0 +1,16 @@
+Metadata-Version: 2.4
+Name: insta485
+Version: 1.0.0
+Requires-Python: >=3.12
+Requires-Dist: arrow
+Requires-Dist: bs4
+Requires-Dist: Flask
+Requires-Dist: Flask-WTF
+Requires-Dist: html5validator
+Requires-Dist: pdbp
+Requires-Dist: pycodestyle
+Requires-Dist: pydocstyle
+Requires-Dist: pylint
+Requires-Dist: pytest
+Requires-Dist: pytest-mock
+Requires-Dist: requests
