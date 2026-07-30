@@ -17,14 +17,35 @@
       </div>
 
       <div class="User-Relationships">
-            {% if username != logname_follows_username %}
-              {% if logname_follows_username %}
-                following 
-              {% else %}
-                follow
-              {% endif %}
-          {% endif %}        
-        {{ total_posts }}  {{'posts' if total_posts != 1 else 'post'}}
+        {% if username == logname %}
+          <a href="/accounts/edit">Edit Profile</a>
+        {% endif %}
+
+        {% if username != logname %}
+          {% if logname_follows_username %}
+            <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
+            <form action="/following/?target={{curr_path}}" method="post" enctype="multipart/form-data">
+              <input type="submit" name="unfollow" value="unfollow"/>
+              <input type="hidden" name="username" value="username"/>
+              <input type="hidden" name="operation" value="unfollow"/>
+            </form>       
+
+          {% else %}
+          <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
+          <form action="/following/?target={{curr_path}}" method="post" enctype="multipart/form-data">
+            <input type="submit" name="follow" value="follow"/>
+            <input type="hidden" name="username" value="username"/>
+            <input type="hidden" name="operation" value="follow"/>
+          </form>
+          
+          {% endif %}
+        {% else %}
+            <form action="/accounts/logout/" method="post" enctype="multipart/form-data">
+              <input type="submit" name="operation" value="logout"/>
+            </form>
+        {% endif %}    
+
+        {{ users_post_count }}  {{'posts' if users_post_count != 1 else 'post'}}
         <div class="Follows">
           <a href="/users/{{ username }}/followers/">{{ followers }} 
             {% if followers != 1 %}
@@ -33,14 +54,21 @@
               follower
             {% endif %}
           </a>
+
           <a href="/users/{{ username }}/following/">{{ following }}following</a>
         </div>
       </div>
       <p>{{ fullname }}</p>
+      <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
+      <form action="/uploads/<filename>?target={{curr_path}}" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" accept="image/*" required/>
+        <input type="submit" name="create_post" value="upload new post"/>
+        <input type="hidden" name="operation" value="create"/>
+      </form>
 
       {% for user_posted in posts %}
       <a href="/posts/{{user_posted.postid}}/">
-        <img class="Users-Posted-Image" src="{{ user_posted.img_url }}">
+        <img class="Users-Posted-Image" src="{{ user_posted.image_posts }}">
       </a>
       {% endfor %}
     </div>

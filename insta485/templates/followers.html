@@ -24,9 +24,21 @@
           {% if user_details.username != user_details.logname_follows_username %}
             {% if user_details.logname_follows_username %}
               following 
+            <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
+            <form action="/following/?target={{curr_path}}" method="post" enctype="multipart/form-data">
+              <input type="submit" name="unfollow" value="unfollow"/>
+              <input type="hidden" name="username" value="username"/>
+              <input type="hidden" name="operation" value="unfollow"/>
+            </form>       
             {% else %}
-              follow
+            <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
+            <form action="/following/?target={{curr_path}}" method="post" enctype="multipart/form-data">
+              <input type="submit" name="follow" value="follow"/>
+              <input type="hidden" name="username" value="username"/>
+              <input type="hidden" name="operation" value="follow"/>
+            </form>
             {% endif %}
+          
           {% endif %}
         </p>          
       </div>

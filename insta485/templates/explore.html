@@ -19,6 +19,11 @@
         <p class="post-username">
           <a href="/users/{{ user_details.username }}/">{{ user_details.username }}</a>
         </p>
+        <form action="/following/?target={{curr_path}}" method="post" enctype="multipart/form-data">
+          <input type="submit" name="follow" value="follow"/>
+          <input type="hidden" name="username" value="username"/>
+          <input type="hidden" name="operation" value="follow"/>
+        </form>
       </div>
       {% endfor %}
 

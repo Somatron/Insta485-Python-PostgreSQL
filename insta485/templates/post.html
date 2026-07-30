@@ -12,7 +12,7 @@
     </div>
 
     <div class="Post-Details">
-      <img class="Post-Image-Details" src="{{img_url}}">
+      <img class="Post-Image-Details" src="{{post_image}}">
       <div class="userpost-Details">
         <img class="user-profile-Details" src="{{owner_img_url}}">
         <p class="post-username-Details">
@@ -21,14 +21,48 @@
         <p class="post-time-Details">{{timestamp}}</p>      
       </div>
       
-      <p class="display-likes">{{likes}} {{'likes' if likes != 1 else 'like'}}</p>
+      <p class="display-likes">{{post_likes}} {{'likes' if post_likes != 1 else 'like'}}</p>
 
-      {% for unique_comment in comments %}
+      {% if like_button %}
+      <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
+      <form action="/likes/?target={{curr_path}}" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="operation" value="unlike"/>
+        <input type="hidden" name="postid" value="likeid"/>
+        <input type="submit" name="unlike" value="unlike"/>
+      </form>
+      {% else %}
+      <form action="/likes/?target=URL?target={{curr_path}}" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="operation" value="like"/>
+        <input type="hidden" name="postid" value="likeid"/>
+        <input type="submit" name="like" value="like"/>
+      </form>
+      {% endif %}
+
+      {% for unique_comment in post_comments %}
       <div class="user-comment-Details">
         <div class="comment-username">{{ unique_comment.owner }}</div>
         <div class="comment-type">{{ unique_comment.text }}</div>
       </div>
+
+        {% if unique_comment.is_my_comment %}
+          <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
+          <form action="/comments/?target={{curr_path}}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="operation" value="delete"/>
+            <input type="hidden" name="commentid" value="commentid"/>
+            <input type="submit" name="uncomment" value="delete"/>
+          </form>
+        {% endif %}
+
       {% endfor %}
+
+      {% if owner == logname %}
+      <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
+      <form action="/posts/?target={{curr_path}}" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="operation" value="delete"/>
+        <input type="hidden" name="postid" value="postid"/>
+        <input type="submit" name="delete" value="delete this post"/>
+      </form>
+      {% endif %}
 
 
     </div>

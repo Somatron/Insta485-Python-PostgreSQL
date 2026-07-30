@@ -21,7 +21,7 @@
           <p class="post-time">{{section.timestamp}}</p>          
         </a>        
       </div>
-      <img class="post-image" src="{{section.img_url}}">
+      <img class="post-image" src="{{section.img_friend}}">
 
 
       <p class="display-likes">{{section.likes}} {{'likes' if section.likes != 1 else 'like'}}</p>
@@ -32,6 +32,29 @@
         <div class="comment-type">{{ unique_comment.text }}</div>
       </div>
       {% endfor %}
+
+
+      {% if section.post['user_liked'] %}
+      <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
+      <form action="/likes/?target={{curr_path}}" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="operation" value="unlike"/>
+        <input type="hidden" name="postid" value="section.postid"/>
+        <input type="submit" name="unlike" value="unlike"/>
+      </form>
+      {% else %}
+      <form action="/likes/?target=URL?target={{curr_path}}" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="operation" value="like"/>
+        <input type="hidden" name="postid" value="section.postid"/>
+        <input type="submit" name="like" value="like"/>
+      </form>
+      {% endif %}
+
+      <form action="/comments/?target={{curr_path}}" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="operation" value="create"/>
+        <input type="hidden" name="postid" value="posts.postid"/>
+        <input type="text" name="text" required/>
+        <input type="submit" name="comment" value="comment"/>
+      </form>
 
     </div>
     {% endfor %}
