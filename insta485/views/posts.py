@@ -36,6 +36,8 @@ def generate_password_hash(password: str) -> str:
 #password provided will be whatever our user inputs for their password
 def verify_password(stored_password_format: str, password_provided: str) -> bool:
   """varifies password against a stored algorithm$hash string"""
+  if not stored_password_format or '$' not in stored_password_format:
+    return False
 
   extract_password = stored_password_format.split("$")
   #extract_password = ['sha256', uuid.uuid4().hex, '651593c5fe5c006fa5752']
@@ -53,7 +55,7 @@ def verify_password(stored_password_format: str, password_provided: str) -> bool
 
 
 #Uploading folders and files, this handles serving dynamic files like profile pictures and post uploads
-@app.route('/uploads/<filename>', methods=['POST'])
+@app.route('/uploads/<filename>', methods=['GET']) #serving files must be a GET request
 def get_upload(filename):
     """Serve uploaded images securely."""
     #Check if user is logged in 
@@ -71,10 +73,11 @@ def get_upload(filename):
 def update_comments():
   #HANDLE comment creation and deletion
   if 'username' not in flask.session:
-    return flask.redirect('/accounts/login/')
+    flask.abort(403)
 
   logname = flask.session['username']
-  operation = flask.request.form.get['operation'] #operation is what we get from the HTML
+
+  operation = flask.request.form.get('operation') #operation is what we get from the HTML
   """
   <input type="hidden" name="operation" value="like"/> for example lol
   whenever we say create or delete a comment, the value should tell us what action we're doing
@@ -86,8 +89,8 @@ def update_comments():
   cur = connection.cursor()
 
   if operation == 'create':
-    whatpost = flask.request.form.get["postid"]
-    whattext = flask.request.form.get["text"]
+    whatpost = flask.request.form.get("postid")
+    whattext = flask.request.form.get("text")
 
     cur.execute("INSERT INTO comments (owner, postid, text) VALUES (%s, %s, %s)", (logname, whatpost, whattext))
     connection.commit()
@@ -109,21 +112,21 @@ def update_likes():
     return flask.redirect('/accounts/login/')
 
   logname = flask.session['username']
-  operation = flask.request.form.get['operation'] #find create or delete
+  operation = flask.request.form.get('operation') #find create or delete
+  target = flask.request.args.get('target', '/')
+  postid = flask.request.form.get("postid")
 
   connection = grab_db()
   cur = connection.cursor() #select whats in database
 
   if operation == 'create':
-    postid = flask.request.form.get["postid"]
-    likeid = flask.request.form.get["likeid"]
-
-    cur.execute("UPDATE likes SET likeid = %s WHERE postid = %s", (likeid + 1, postid))
+    cur.execute("INSERT INTO likes (owner, postid) VALUES (%s, %s)", (logname, postid))
     connection.commit()
-
   if operation == 'delete':
-    cur.execute("UPDATE likes SET likeid = %s WHERE postid = %s", (likeid - 1, postid))
+    cur.execute("DELETE FROM likes WHERE owner = %s AND postid = %s", (logname, postid))
     connection.commit()
+
+  return flask.redirect(target) #after liking should redirect us
 
 
 #CREATE OR DELETE POST
@@ -133,13 +136,13 @@ def update_posts():
     return flask.redirect('/accounts/login/')
 
   logname = flask.session['username']
-  operation = flask.request.form.get['operation'] #create or delete posts
+  operation = flask.request.form.get('operation') #create or delete posts
+  target = flask.request.args.get('target', f'/users/{logname}/')
 
   connection = grab_db()
   cur = connection.cursor()
 
   if operation == 'create':
-    postid = flask.request.form.get['postid']
     
     # Unpack flask object
     fileobj = flask.request.files["file"]
@@ -154,18 +157,32 @@ def update_posts():
     uuid_basename = f"{stem}{suffix}"
 
     # Save to disk
-    path = insta485.app.config["UPLOAD_FOLDER"]/uuid_basename
+    path = pathlib.Path(insta485.app.config["UPLOAD_FOLDER"])/uuid_basename
     fileobj.save(path)
 
-    cur.execute("INSERT INTO posts (owner, filename, postid) VALUES (%s, %s)", (logname, uuid_basename, postid))
+    cur.execute("INSERT INTO posts (owner, filename, postid) VALUES (%s, %s)", (logname, uuid_basename))
+    connection.commit()
 
   if operation == 'delete':
-    owner = flask.request.form.get['owner']
+    #Get postid from form data
+    postid = flask.request.form.get['postid']
 
-    if logname != owner:
+    owner = flask.request.form.get['owner']
+    #verify we can find the filename before deletion
+    cur.execute("SELECT owner, filename FROM posts WHERE postid = %s", (postid,))
+    post = cur.fetchone() #grab the one post we've selected
+
+    if logname != owner or not post:
       flask.abort(403)
     else:
-      cur.execute("DELETE FROM posts WHERE postid = %s and filename = %s and OWNER = %s", (postid, fileobj, logname))
+      img_path = pathlib.Path(insta485.app.config["UPLOAD_FOLDER"])/post['filename']
+      if img_path.exists(): #if we find the image we delete it from the system
+        os.remove(img_path)
+
+      cur.execute("DELETE FROM posts WHERE postid = %s and filename = %s and OWNER = %s", (fileobj, logname))
+      connection.commit()
+
+  return flask.redirect(target)
 
 
 #FOLLOWING OR NOT
@@ -180,93 +197,96 @@ def update_following():
     flask.redirect('/accounts/login/')
 
   logname = flask.session['username']
-  operation = flask.request.form.get['operation'] #follow or unfollow
+  username = flask.request.form.get('username')
+  operation = flask.request.form.get('operation') #follow or unfollow
+  target = flask.request.args.get('target', '/')
 
   connection = grab_db()
   cur = connection.cursor()
+  is_following = bool(cur.fetchone())
 
-  if operation == 'create':
-    follower = flask.request.form.get['follower']
-    followee = flask.request.form.get['followee']
-
-    if logname not in followee:
-      cur.execute("INSERT INTO following (follower, followee) VALUES (%s, %s)", (follower, logname))
+  if operation == 'follow':
+    if is_following:
+      cur.execute("INSERT INTO following (follower, followee) VALUES (%s, %s)", (logname, username))
     else:
       flask.abort(409)
 
-  if operation == 'delete':
-    follower = flask.request.form.get['follower']
-    followee = flask.request.form.get['followee']
-
-    if logname in followee: #if the user is following
-      cur.execute("DELETE FROM following (follower, followee) VALUES (%s, %s)", (follower, logname))
+  if operation == 'unfollow':
+    if is_following: #if the user is following, we use WHERE to locate the query
+      cur.execute("DELETE FROM following WHERE follower = %s AND followee = %s", (logname, username))
     else:
       flask.abort(409)
+  return flask.redirect(target)
 
 
 
 @app.route('/accounts/', methods=['POST'])
 def handle_account_actions():
   #get operation & target redirect URL from post request
-  operation = flask.request.form.get['operation']
+  operation = flask.request.form.get('operation')
   target = flask.request.args.get('target', '/')
   connect_db = grab_db()
+  current = connect_db.cursor()
 
 
   if operation == 'login': #grab login input
-    username = flask.request.form.get['username']
-    password = flask.request.form.get['password']
+    username = flask.request.form.get('username')
+    password = flask.request.form.get('password')
 
     if not username or not password:
-      Flask.abort(400)
+      flask.abort(400)
 
     
-    current  = connect_db.execute("SELECT password FROM users WHERE username = ?", (username,))
+    current  = connect_db.cursor("SELECT password FROM users WHERE username = ?", (username,))
     #aye tell our database to grab our passwords for cryin out loud and compare it
     user = current.fetchone() #grab the next single row of the set
 
     if not user or not verify_password(user['password'], current): #compare user password to database password
-      Flask.abort(400) #if password no match we throw error ooguh
+      flask.abort(403) #if password no match we throw error ooguh
 
     #Set session variable to login the user
-    Flask.session['username'] = username 
-    return Flask.redirect(target)
+    flask.session('username') = username 
+    return flask.redirect(target)
   
   elif operation == 'logout':
-    Flask.session.clear() #removes user being logged in
-    return Flask.redirect(Flask.url_for('show_login'))
+    flask.session.clear() #removes user being logged in
+    return flask.redirect(flask.url_for('show_login'))
 
   elif operation == 'create':
     create_account(connect_db)
+    return flask.redirect(target)
 
   elif operation == 'delete':
     if 'username' not in flask.session:
       flask.abort(403)
     delete_account(connect_db)
+    return flask.redirect(flask.url_for('show_login'))
 
   elif operation == 'edit':
     if 'username' not in flask.session:
       flask.abort(403)
     logname = flask.session['username']
-    edit_account(connect_db)
+    edit_account(logname, connect_db)
+    return flask.redirect(target)
 
   elif operation == 'password':
     if 'username' not in flask.session:
       flask.abort(403)
     logname = flask.session['username']
     password_update(logname, connect_db)
+    return flask.redirect(target)
 
   #Flask.abort(400)
 
 def create_account(connect_db):
-  username = flask.request.form.get['username']
-  password = flask.request.form.get['password']
-  fullname = flask.request.form.get['fullname']
-  file_object = flask.request.files["file"]
-  email = flask.request.form.get["email"]
+  username = flask.request.form.get('username')
+  password = flask.request.form.get('password')
+  fullname = flask.request.form.get('fullname')
+  file_object = flask.request.files("file")
+  email = flask.request.form.get("email")
 
   filename = file_object.filename
-  if filename is None:
+  if filename is None or not password or not username or not email:
     flask.abort(400)
 
   #before we can add password into our database we should hash it first
@@ -281,84 +301,97 @@ def create_account(connect_db):
   uuid_basename = f"{stem}{suffix}"
 
   # Save to disk
-  path = insta485.app.config["UPLOAD_FOLDER"]/uuid_basename
+  path = pathlib.Path(insta485.app.config["UPLOAD_FOLDER"])/uuid_basename
   file_object.save(path)
 
   #If user tries creating an account with existing username
-  cur = connect_db.execute(
+  cur = connect_db.cursor()
+
+  cur.execute(
     "SELECT * FROM users WHERE username = %s", (username, )
   )
 
   if cur.fetchone() is not None: #if username does exist and its overlapping with the users input for username
     flask.abort(409)
 
-  connect_db.execute("INSERT INTO users (username, fullname, email, filename, password) VALUES (%s, %s, %s, %s, %s)", (username, fullname, email, uuid_basename, new_protected_password))
+  cur.execute("INSERT INTO users (username, fullname, email, filename, password) VALUES (%s, %s, %s, %s, %s)", (username, fullname, email, uuid_basename, new_protected_password))
   connect_db.commit()
 
   flask.session['username'] = username #login now
 
 def delete_account(connect_db):
-  username = flask.request.form.get['username']
+  username = flask.session['username']
+  cur = connect_db.cursor()
 
-  grab_all_users_post = connect_db.execute(
+  grab_all_users_post = cur.execute(
     "SELECT filename FROM posts WHERE owner = %s", (username, )
   )
 
   all_posts = grab_all_users_post.fetchall() #find every post related to the user
   for each_post in all_posts:
     old_uuid_basename = each_post['filename'] #get the post img
-    os.remove(insta485.app.config["UPLOAD_FOLDER"]/old_uuid_basename) #navigate to the file and remove it
+    img_path = pathlib.Path(insta485.app.config["UPLOAD_FOLDER"])/old_uuid_basename
 
-
-  connect_db.execute("DELETE FROM users WHERE username = %s", (username,))
-
+    if img_path.exists(): #if we find the file associated with account remove
+      os.remove(img_path) #navigate to the file and remove it
+  cur.execute("DELETE FROM users WHERE username = %s", (username,))
+  connect_db.commit()
   flask.session.clear() #clear username session after success
 
-
 def edit_account(logname, connect_db):
-  fullname = flask.request.form.get['fullname']
-  email = flask.request.form.get['email']
-  file_object = flask.request.files.get['file', None]
+  fullname = flask.request.form.get('fullname')
+  email = flask.request.form.get('email')
+  file_object = flask.request.files.get('file')
   #unlock file object
+  cur = connect_db.cursor()
 
   if file_object is None: #edit only fullname and email
-    cur = connect_db.execute("UPDATE users SET fullname = %s, email = %s, WHERE username = %s", (fullname, email, logname))
+    cur = connect_db.cursor("UPDATE users SET fullname = %s, email = %s WHERE username = %s", (fullname, email, logname))
   else:
     filename = file_object.filename
 
     #remove old file
-    cur = connect_db.execute("SELECT * FROM users WHERE username = %s", (logname, )) #find the file from username
+    cur.execute("SELECT * FROM users WHERE username = %s", (logname, )) #find the file from username
     old_uuid_basename = cur.fetchone()['filename'] #get file
-    os.remove(insta485.app.config["UPLOAD_FOLDER"]/old_uuid_basename) #removefile
+    old_img_path = pathlib.Path(insta485.app.config["UPLOAD_FOLDER"])/old_uuid_basename
+    if old_img_path.exists():
+      os.remove(old_img_path) #removefile
 
     stem = uuid.uuid4().hex #encrypt our file so if someone uploads the same filename we it doesnt overlap
     suffix = pathlib.Path(filename).suffix.lower()
     uuid_basename = f"{stem}{suffix}"
 
     # Save to disk
-    path = insta485.app.config["UPLOAD_FOLDER"]/uuid_basename
+    path = pathlib.Path(insta485.app.config["UPLOAD_FOLDER"])/uuid_basename
     file_object.save(path)
 
     #execute object now within user, with new file
-    cur = connect_db.execute("UPDATE users SET fullname = %s, email = %s, filename = %s, WHERE username = %s", (fullname, email, uuid_basename, logname))
+    cur.execute("UPDATE users SET fullname = %s, email = %s, filename = %s, WHERE username = %s", (fullname, email, uuid_basename, logname))
+
+  connect_db.commit()
 
 def password_update(logname, connect_db):
-  old_password = flask.request.form.get['password']
-  new_password = flask.request.form.get['new_password1']
-  password_again = flask.request.form.get['new_password2']
+  old_password = flask.request.form.get('password')
+  new_password = flask.request.form.get('new_password1')
+  password_again = flask.request.form.get('new_password2')
+  cur = connect_db.cursor()
 
   #passwords must match
   if new_password != password_again:
     flask.abort(401)
-
   #Get our current right password
-  users_password = connect_db.execute("SELECT * FROM users WHERE username = %s", (logname, ))
+  cur.execute("SELECT * FROM users WHERE username = %s", (logname, ))
+  users_password = cur.fetchone()
 
   #verify password with users password, and our old password
-  if verify_password(users_password, old_password):
+  if users_password and verify_password(users_password['password'], old_password):
+    new_password_hashed = generate_password_hash(password_again)
     #find username and set their password again
-    connect_db.execute("UPDATE users SET password = %s WHERE username = %s", (password_again, logname))
+    cur.execute("UPDATE users SET password = %s WHERE username = %s", (new_password_hashed, logname))
+    connect_db.commit()
   else:
     flask.abort(403) #passwords do not match
+
+  
 
     
