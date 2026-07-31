@@ -5,6 +5,16 @@ import insta485
 import psycopg
 from psycopg.rows import dict_row
 
+
+"""
+    "dbname": 'postgres',
+    "user": 'postgres',
+    "password": '1D0ll@rDVD',
+    "host": 'localhost',
+    "port": '5432'
+
+"""
+
 def grab_db():
     """Open a new database connection.
 
