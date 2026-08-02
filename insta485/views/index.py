@@ -30,30 +30,23 @@ def show_index():
     #2. Open cursor to execute query
     cur = connection.cursor()
 
-    # Query database
-    cur.execute(
-        "SELECT username, fullname "
-        "FROM users "
-        "WHERE username != %s",
-        (logname, )
-    )
     query = """
-        SELECT posts.postid, posts.filename AS img_friend, users.filename AS owner_img_url, posts.owner, posts.created AS timestamp 
-        FROM posts INNER JOIN users ON posts.owner = user.username
-        WHERE posts.owner = %s OR posts.owner IN (SELECT followee FROM following WHERE follower = %s)
+        SELECT posts.postid, posts.filename AS img_friend, users.filename AS owner_img_url, posts.owner, posts.created AS timestamp FROM posts INNER JOIN users ON posts.owner = users.username WHERE posts.owner = %s OR posts.owner IN (SELECT followee FROM following WHERE follower = %s)
         ORDER BY posts.postid DESC;
     """
     cur.execute(query, (logname, logname))
     posts = cur.fetchall() #get all posts
-    ymd = "YYYY-MM-DD HH:mm:ss"
     #clean up cursor when done
     for post in posts:
         #humanize means "an hour ago"/"in 3 days"
-        posts["timestamp"] = arrow.get(post["timestamp"], ymd).humanize()
+        post["timestamp"] = arrow.get(str(post["timestamp"])).humanize()
 
         #fetch comments for post, we dont need postid since we already have it
         cur.execute("SELECT commentid, owner, text FROM comments WHERE postid = %s ORDER BY commentid ASC", (post['postid'],)) #place these comments in appropriate postid
         post['comments'] = cur.fetchall() #shows us whoever is logged in
+
+        cur.execute("SELECT filename FROM users WHERE username = %s", (logname, ))
+        user_profile_pic = cur.fetchall()[0]["filename"]
 
         #check if logged in user liked the post
         cur.execute("SELECT 1 FROM likes WHERE owner = %s AND postid = %s", (logname, post['postid'])) #whoever is logged in see if they liked the post or not
@@ -66,12 +59,13 @@ def show_index():
 
     context = {"logname": logname, 
                "posts": posts, 
+               "user_profile_pic": user_profile_pic,
                "curr_path": request.path} #pass this to render into HTML for jinja to render 
     return flask.render_template("index.html", **context)
 
 
 #INDIVIDUAL POST
-@insta485.app.route("/posts/<post_id>/", methods=['GET'])
+@insta485.app.route("/posts/<postid>/", methods=['GET'])
 def show_individual_post(postid):
     if 'username' not in flask.session:
         return flask.redirect(flask.url_for('show_login'))
@@ -92,22 +86,21 @@ def show_individual_post(postid):
     post = post_check[0]
 
 
-    ymd = "YYYY-MM-DD HH:mm:ss"
-    post["timestamp"] = arrow.get(post["timestamp"], ymd).humanize() #puts into 2 days ago format
+    post["timestamp"] = arrow.get(str(post["timestamp"])).humanize() #puts into 2 days ago format
 
     #Get comments
-    cur = connection.execute("SELECT commentid, owner, text FROM comments WHERE postid = %s ORDER BY commentid ASC", (postid))
+    cur.execute("SELECT commentid, owner, text FROM comments WHERE postid = %s ORDER BY commentid ASC", (postid,))
     comments = cur.fetchall() #grab all comments assigned to the post number
 
-    cur = connection.execute("SELECT COUNT(commentid) as your_comment FROM comments WHERE postid = %s AND owner = %s", (postid, logname, ))
+    cur.execute("SELECT COUNT(commentid) as your_comment FROM comments WHERE postid = %s AND owner = %s", (postid, logname, ))
     post["logname_comment"] = cur.fetchall()[0]["your_comment"]
 
     #grab like counts
-    cur = connection.execute("SELECT COUNT(*) AS likes FROM likes WHERE postid = %s", (postid, ))
+    cur.execute("SELECT COUNT(*) AS likes FROM likes WHERE postid = %s", (postid, ))
     all_likes = cur.fetchone()["likes"] #grab the likes from the post we're at
 
     #Find likes owners, differentiate whether the logged in user liked the post or not
-    cur = connection.execute("SELECT COUNT(*) AS unique_like FROM likes WHERE postid = %s AND owner = %s", (postid, logname, ))
+    cur.execute("SELECT COUNT(*) AS unique_like FROM likes WHERE postid = %s AND owner = %s", (postid, logname, ))
     post["like_button"] = cur.fetchone()["unique_like"] #see if owner has liked the post or not, determines the like button
 
     context = {"logname": logname, 
@@ -121,7 +114,7 @@ def show_individual_post(postid):
                "is_my_comment": post["logname_comment"], 
                "postid": postid, 
                "curr_path": request.path}
-    return flask.render_template("posts.html", **context)
+    return flask.render_template("post.html", **context)
 
 #USER PAGE
 @insta485.app.route("/users/<username>/", methods=['GET'])
@@ -139,28 +132,30 @@ def user_profile(username): #get the user profile into our parameter
         flask.abort(404)
 
 
-    cur = connection.execute(
+    cur.execute(
         "SELECT * FROM following WHERE follower = %s AND followee = %s", (logname, username, )
     )
     logname_follows_username = bool(cur.fetchone()) #grabs a true and false statement to make sure if the user
     #is following the user or not
 
     #Get all of the total posts of <username> as a count
-    cur = connection.execute( #get all of the userposts that the username played
+    cur.execute( #get all of the userposts that the username played
         "SELECT COUNT(postid) AS count FROM posts WHERE owner = %s", (username,)
     )
-    users_post_count = cur.fetchall()["count"] #to display as 4 posts or how many posts they have
+    users_post_count = cur.fetchall()[0]["count"] #to display as 4 posts or how many posts they have
 
 
     #Get the fullname of username
-    cur = connection.execute("SELECT fullname FROM users WHERE username = %s", (username, ))
+    cur.execute("SELECT fullname FROM users WHERE username = %s", (username, ))
     get_user_details = cur.fetchall()[0]["fullname"] #get the users full name
 
+    cur.execute("SELECT filename FROM users WHERE username = %s", (username, ))
+    user_profile_pic = cur.fetchall()[0]["filename"]
 
     #get followers and following
-    cur = connection.execute("SELECT COUNT(*) AS count FROM following WHERE follower = %s", (username, ))
+    cur.execute("SELECT COUNT(*) AS count FROM following WHERE follower = %s", (username, ))
     followers = cur.fetchall()[0]["count"]
-    cur = connection.execute("SELECT COUNT(followee) AS count FROM following WHERE followee = %s", (username, ))
+    cur.execute("SELECT COUNT(followee) AS count FROM following WHERE followee = %s", (username, ))
     following = cur.fetchall()[0]["count"]
 
     cur.execute("SELECT postid, filename AS img_url FROM posts WHERE owner = %s", (username, ))
@@ -172,6 +167,7 @@ def user_profile(username): #get the user profile into our parameter
                "posts": users_post_count, 
                "following": following, 
                "followers": followers, 
+               "user_profile_pic": user_profile_pic,
                "logname_follows_username": logname_follows_username, 
                "image_posts": image_posts, 
                "curr_path": request.path}
@@ -189,20 +185,20 @@ def user_followers(username):
     cur = connection.cursor()
 
     #if someone tries to access a user_url_slug that does not exist in the database, then abort(404).
-    cur = connection.execute( #check if username exists in database, if not go to 404
+    cur.execute( #check if username exists in database, if not go to 404
     "SELECT * FROM users WHERE username = %s", (username, )
     )
     if cur.fetchone() is None:
         flask.abort(404)
 
     #find if <username> follows each follower
-    connection.execute( #chooses user file, and username, connects users table to the following table by matching the users main profile name with the person being followed
+    cur.execute( #chooses user file, and username, connects users table to the following table by matching the users main profile name with the person being followed
         #WHERE it filters the list of the people followed by the target user
         "SELECT users.filename as user_img_url, users.username FROM users INNER JOIN following ON users.username=following.follower WHERE following.followee = %s", (username, )
     )
-    followers = cur.fetchall() #get all of the users and the relationship to the logged in user
+    user_followers = cur.fetchall() #get all of the users and the relationship to the logged in user
 
-    for follower in followers: #navigate for each user
+    for follower in user_followers: #navigate for each user
         cur.execute("SELECT * FROM following WHERE follower = %s AND followee = %s", (logname, follower["username"], )) #find the relationship of the user
         follower["logname_follows_username"] = bool(cur.fetchone()) #true or false
 
@@ -210,7 +206,7 @@ def user_followers(username):
     #dictionary
     context = {"logname": logname, 
                "username": username, 
-               "followers": followers, 
+               "user_followers": user_followers, 
                "curr_path": request.path}
     return flask.render_template("followers.html", **context)
 
@@ -226,20 +222,20 @@ def user_following(username):
     cur = connection.cursor()
 
     #make sure the user_url_slug exists ofc
-    cur = connection.execute(
+    cur.execute(
         "SELECT * FROM users WHERE username = %s", (username, )
     )
     if cur.fetchone() is None:
         flask.abort(404)
 
-    cur = connection.execute( #gonna grab our relationship graph
+    cur.execute( #gonna grab our relationship graph
         "SELECT users.filename AS user_img_url, users.username FROM users INNER JOIN following ON users.username=following.followee WHERE following.follower = %s", (username,)
     ) #CHECK the person on the following page and see if the logged in user A is following this person B, AND THEN compare the usernames relationship with the person B
 
     user_followings = cur.fetchall()
 
     for followee in user_followings:
-        cur = connection.execute("SELECT * FROM following WHERE follower = %s AND followee = %s", (logname, followee["username"], )) #usernames following person, god this logic is a nightmare
+        cur.execute("SELECT * FROM following WHERE follower = %s AND followee = %s", (logname, followee["username"], )) #usernames following person, god this logic is a nightmare
         followee["logname_follows_username"] = bool(cur.fetchone()) #see if this is true or not
 
     context = {"logname": logname, 
@@ -260,7 +256,7 @@ def explore():
     cur = connection.cursor()
 
 
-    cur = connection.execute( #except helps us display users that the logged in user is not following, its basically saying EXCEPT the users that the logged in user is already following
+    cur.execute( #except helps us display users that the logged in user is not following, its basically saying EXCEPT the users that the logged in user is already following
         "SELECT username, filename AS user_img_url FROM users WHERE username != %s AND username NOT IN (SELECT followee FROM following WHERE follower = %s)", (logname, logname)
     )
     not_following = cur.fetchall()

@@ -2,59 +2,85 @@
 <html lang="en">
   <head>
     <title>insta485</title>
-    <link rel="stylesheet" href="css/style.css/style.css">
+    <link rel="stylesheet" href="/static/css/style.css/style.css">
   </head>
   <body>
     <div class="Insta-Header">
-      <a href="/"><img class="insta-logo" src="/images/Instagram-2018-Logo-Vector.png"></a>
-      <p class="explore-user"> <a href="/explore/index.html">explore</a> | <a href="/users/{{logname}}/">{{logname}}</a></p>
+      <a href="/"><img class="insta-logo" src="/static/uploads/Instagram-2018-Logo-Vector.png"></a>
+      <p class="explore-user"> <a class="im-blue" href="/explore/">explore</a> | <a class="im-blue" href="/users/{{logname}}/">{{logname}}</a></p>
     </div>
 
     {% for section in posts %}
     <div class="post">
-      <div class="userpost">
-        <img class="user-profile" src="{{section.owner_img_url}}">
-        <p class="post-username">
-          <a href="/users/{{section.owner}}/">{{section.owner}}</a>
-        </p>
+      <header class="userpost">
+        <div class="post-username">
+          <a href="/users/{{section.owner}}/">
+            <img class="user-profile" src="/static/uploads/{{section.owner_img_url}}"> 
+          </a>
+          <p class="post-username">
+            <a href="/users/{{section.owner}}/">{{section.owner}}</a>
+          </p>
+        </div>
         <a href="/posts/{{section.postid}}/">
           <p class="post-time">{{section.timestamp}}</p>          
         </a>        
+      </header>
+
+      <div class="img-container">
+        <img class="post-image" src="/static/uploads/{{section.img_friend}}">
       </div>
-      <img class="post-image" src="{{section.img_friend}}">
 
+      <div class="button-family">
+          {% if section.user_liked %}
+          <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
+          <form action="/likes/?target={{curr_path}}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="operation" value="unlike"/>
+            <input type="hidden" name="postid" value="{{ section.postid }}"/>
+            <input class="like-button" type="submit" name="unlike" value="❤︎ {{section.likes}} {{'likes' if section.likes != 1 else 'like'}}"/>
+          </form>
+          {% else %}
+          <form action="/likes/?target={{curr_path}}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="operation" value="like"/>
+            <input type="hidden" name="postid" value="{{ section.postid }}"/>
+            <input class="gray-like-button" type="submit" name="like" value="❤︎ {{section.likes}} {{'likes' if section.likes != 1 else 'like'}}"/>
+          </form>
+          {% endif %}
+          <a href="/posts/{{section.postid}}/">
+            <input type="hidden" name="postid" value="{{ section.postid }}"/>
+            <input class="comment-button" type="submit" name="comment" value="💬 3 comments"/>
+          </a>
+          
+      </div>
 
-      <p class="display-likes">{{section.likes}} {{'likes' if section.likes != 1 else 'like'}}</p>
-
+      
       {% for unique_comment in section.comments %}
       <div class="user-comment">
+        <a href="/users/{{unique_comment.owner}}/" class="username-color">
         <div class="comment-username">{{ unique_comment.owner }}</div>
+        </a>
         <div class="comment-type">{{ unique_comment.text }}</div>
       </div>
       {% endfor %}
 
+      <time datetime="2026-07-20" class="date-stamp">{{section.timestamp}}</time>
 
-      {% if section.post['user_liked'] %}
-      <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
-      <form action="/likes/?target={{curr_path}}" method="post" enctype="multipart/form-data">
-        <input type="hidden" name="operation" value="unlike"/>
-        <input type="hidden" name="postid" value="section.postid"/>
-        <input type="submit" name="unlike" value="unlike"/>
-      </form>
-      {% else %}
-      <form action="/likes/?target=URL?target={{curr_path}}" method="post" enctype="multipart/form-data">
-        <input type="hidden" name="operation" value="like"/>
-        <input type="hidden" name="postid" value="section.postid"/>
-        <input type="submit" name="like" value="like"/>
-      </form>
-      {% endif %}
+      <footer class="comment-section">
+        <a href="/users/{{logname}}/">
+          <img class="user-profile" src="/static/uploads/{{ user_profile_pic }}">
+        </a>
+        <div class="comment-wrap">
+          <form action="/comments/?target={{curr_path}}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="operation" value="create"/>
+            <input type="hidden" name="postid" value="{{ section.postid }}"/>
 
-      <form action="/comments/?target={{curr_path}}" method="post" enctype="multipart/form-data">
-        <input type="hidden" name="operation" value="create"/>
-        <input type="hidden" name="postid" value="posts.postid"/>
-        <input type="text" name="text" required/>
-        <input type="submit" name="comment" value="comment"/>
-      </form>
+            <input class="comment-field" type="text" placeholder="Add a comment..."  name="text" required/> 
+
+            <input type="submit" name="comment" class="post-button" value="Post">
+            
+          </form> 
+
+        </div>        
+      </footer>
 
     </div>
     {% endfor %}

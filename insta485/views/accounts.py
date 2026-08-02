@@ -63,4 +63,4 @@ def edit_password():
 
   logname = flask.session["username"] #grab username as usual
   context = {"logname": logname, "curr_path": request.path}
-  return Flask.render_template("password.html", **context) #redirect to changing passwords
+  return flask.render_template("password.html", **context) #redirect to changing passwords

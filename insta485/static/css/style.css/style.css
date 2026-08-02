@@ -1,53 +1,152 @@
+body {
+  font-family: arial;
+}
+
 .post {
-  border: 2px solid #000000;
   justify-content: center;
   align-items: center;
-  width: 500px; /*forces big border box to adjust*/
+  max-width: 600px; /*forces big border box to adjust*/
   margin: 0 auto; /*centers content*/
   margin-bottom: 100px;
   margin-top: 100px;
+  border-radius: 12px;
+  width: 100%;
+  box-shadow: 0 1px 3px rgba(0,0,0, 0.4);
+  font-family: arial;
+  padding-bottom: 12px;
 }
 
 .userpost {
   display: flex;
-  gap: 10px;
   align-items: center;
-  padding: 10px;
+  justify-content: space-between;
+  padding: 12px 16px;
 }
 
 .user-profile {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
   object-fit: cover;
-  border: 2px solid black;
-  justify-content: space-between;
+    box-shadow: 0 1px 3px rgba(0,0,0, 0.4);
 
+}
+
+.post-details {
+  display: flex;
+  flex-direction: column;
 }
 
 .post-username {
   font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.location {
+  font-size: 12px;
+  padding-top: 5px;
+  color: #8e8e8e;
+}
+
+.username {
+  font-weight: 600;
+  color: #262626;
 }
 
 .post-time {
   font-weight: bold;
-  color: gray;
+  color: #131212;
+}
+
+/* IMAGE CONTAINER  vvvvvvvv */
+
+.img-container {
+  padding: 0 16px;
 }
 
 .post-image {
-  display: block;
-  object-fit: contain;
+  object-fit: cover;
   width: 100%;
-  height: auto;
-  max-height: 900px;
+  /* aspect-ratio: 1/1; */
+  border-radius: 24px;
+  
 }
+
+/*COMMENTS AND LIKE BUTTONS */
 
 .post-comment {
   display: flex;
   padding-bottom:10px;
 }
 
-.display-likes {
-  margin-left: 10px;
+.button-family {
+  margin: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.like-button {
+  background-color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  background-color: #ff3b30;
+  color: white;
+  font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.like-button:hover {
+  background-color: #fd5e55;
+}
+
+.like-button:active {
+  opacity: 0.8;
+}
+
+.gray-like-button {
+    background-color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  background-color: #e6e8ec;
+  font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.gray-like-button:hover {
+  background-color: #d1d6df;
+}
+
+.gray-like-button:active {
+  opacity: 0.5;
+}
+
+.comment-button {
+  background-color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  color: rgb(65, 66, 68);
+  font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.comment-button:hover {
+  color: rgb(134, 143, 156);
+}
+
+.comment-button:active {
+  opacity: 0.6;
 }
 
 .user-comment {
@@ -59,11 +158,82 @@
 .comment-username {
   font-weight: bold;
   margin-right: 10px;
-  margin-left: 10px;
+  margin-left: 14px;
+}
+
+.date-stamp {
+  margin-left: 14px;
+  font-size: 11px;
+  color: #8d8d8d;
+  text-transform: uppercase;
+  margin-bottom: 40px;
+}
+
+/* COMMENT SECTION */
+
+.comment-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px 8px 16px;
+  border-top: 1px solid rgb(231, 234, 238);
+  margin-top: 12px;
+}
+
+.comment-wrap {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.comment-field {
+  border: none;
+  flex-grow: 1;
+  background-color: #f5f5f5;  
+  border-radius: 24px;
+  padding: 12px 16px;
+  font-size: 14px;
+  outline: none;
+  width: 425px;
+  margin-right: 5px
+}
+
+.comment-field:hover {
+  background-color: #e7e8ec;  
+}
+
+.post-button {
+  background: none;
+  border: none;
+  color: #0095f6;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.post-button:hover {
+  color: #0068b8;
+}
+
+
+/* USER PROFILE */
+
+.user-profile-picture {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
 }
 
 .Profile-username {
   font-size: 30px;
+}
+
+.edit-logout {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+
+  gap: 20px;
 }
 
 .Main-User-Profile {
@@ -77,15 +247,81 @@
   padding-right: 100px;
 }
 
+.Profile-Details {
+    display: flex;
+  align-items: center;
+  gap: 40px;
+  margin-bottom: 80px;
+}
+
+.logout {
+  border: none;
+  padding: 10px 12px;
+  font-weight: bold;
+  color: white;
+  background: rgb(57, 136, 253);
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.logout:hover {
+  background: rgb(43, 109, 250)
+}
+
+.follow-button {
+  border: none;
+  padding: 10px 12px;
+  font-weight: bold;
+  color: white;
+  background: rgb(57, 136, 253);
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.follow-button:hover {
+  background: rgb(43, 109, 250);
+}
+
+.follow-button:active {
+  opacity: 0.8;
+}
+
+.unfollow-button {
+  border: none;
+  padding: 10px 12px;
+  font-weight: bold;
+  color: white;
+  background: rgb(127, 147, 182);
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.unfollow-button:hover {
+  background: rgb(73, 86, 109);
+}
+
+.unfollow-button:active {
+  opacity: 0.8;
+}
+
 .User-Relationships {
   display: flex;
   gap: 5px;
   align-items: center;
   padding-top: 10px;
+  margin-bottom: 20px;
 }
 
 .Follows {
   font-weight: bold;
+  color: rgb(0, 0, 0);
+}
+
+.user-caption {
+  margin-bottom: 100px;
 }
 
 .Users-Posted-Image {
@@ -94,6 +330,13 @@
   width: 250px;
   height: 200px;
   margin-right: 20px;
+  transition: transform 0.3s ease; 
+}
+
+
+.Users-Posted-Image:hover {
+ transform: scale(1.2);
+ cursor: pointer;
 }
 
 .Insta-Header {
@@ -107,14 +350,29 @@
   padding-bottom: 10px;
 }
 
-.explore-user {
-  font-weight: bold;
-  font-size: 20px;
-  white-space: nowrap; /*prevents username from dropping a new line*/
+
+
+.im-blue {
+  color: #0095f6;
+}
+
+.im-blue:hover {
+  color: #0076c5;
 }
 
 .insta-logo {
   width: 25%;
+}
+
+.username-color {
+  text-decoration: none;
+  color:rgb(0, 0, 0);
+}
+
+.explore-user {
+  font-weight: bold;
+  font-size: 20px;
+  white-space: nowrap; /*prevents username from dropping a new line*/
 }
 
 .Relationship-Head, .Explore-Head {
@@ -132,10 +390,11 @@
   padding: 50px;
   padding-left: 100px;
   padding-right: 100px;
+  margin-left: 200px;
 }
 
 .account-info {
-  border: 2px solid rgb(182, 182, 182);
+  border: 2px solid rgb(0, 0, 0);
   padding: 10px;
   padding-left: 20px;
   padding-right: 20px;
@@ -145,54 +404,77 @@
   gap: 10px;
   border-radius: 20px;
   margin-bottom: 20px;
-
 }
+
 
 .relationship-status {
   color: gray;
   margin-left: auto;
 }
 
-.Post-Details {
-  border: 2px solid #808080;
-  justify-content: center;
+/*LOG IN         */
+
+.login-page, .create-page {
+  display: flex;
+  justify-content: center; 
   align-items: center;
-  width: 500px; /*forces big border box to adjust*/
-  margin: 0 auto; /*centers content*/
-  margin-bottom: 100px;
-  margin-top: 100px;
+  width: 100%;
+  min-height: 70vh;
+  
 }
 
-.userpost-Details {
+.login-container, .create-container {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.login-container form {
+  display: flex;
+  flex-direction: column;
   gap: 10px;
-  align-items: center;
-  padding: 10px;
-}
+  width: 20%;
+} 
 
-.user-profile-Details {
-  width: 20px;
-  height: 20px;
-  object-fit: cover;
-  border: 2px solid rgb(133, 132, 132);
-  justify-content: space-between;
-  border-radius: 10px;
-}
-
-.post-username-Details {
-  font-weight: bold;
-  font-size: 10px;
-}
-
-.post-time-Details {
-  font-weight: bold;
-  color: gray;
-  font-size: 10px;
-}
-
-.user-comment {
+.create-container form {
+  margin-top: 100px;
   display: flex;
-  padding-top: 10px;
-  padding-bottom:10px;
-  font-size: 10px;
+  flex-direction: column;
+  gap: 10px;
+  width: 20%;
 }
+
+.User-Input {
+  margin-bottom: 20px;
+  padding: 10px;
+  border-radius: 10px;
+  outline: 1px solid #050a0e;
+  border: none;
+  box-shadow: 2 1px 3px rgba(0,0,0, 0.4);
+}
+
+.User-Input:focus, .User-Input:hover {
+  outline: 2px solid rgb(100, 112, 139);
+}
+
+.login-button, .signup-button {
+  background-color: rgb(13, 108, 250);
+  border: none;
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 20px;
+}
+
+.login-button:hover, .signup-button:hover {
+  background-color: rgb(43, 127, 252);
+}
+
+.login-button:active, .signup-button:active {
+  opacity: 0.7;
+}
+
+/*CREATE ACCOUNT */

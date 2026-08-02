@@ -2,73 +2,84 @@
 <html lang="en">
   <head>
     <title>insta485</title>
-    <link rel="stylesheet" href="/css/style.css/style.css">
+    <link rel="stylesheet" href="/static/css/style.css/style.css">
   </head>
   <body>
-
     <div class="Insta-Header">
-      <a href="/"><img class="insta-logo" src="/images/Instagram-2018-Logo-Vector.png" ></a>
-      <p class="explore-user"> <a href="/explore/index.html">explore</a> | <a href="/users/{{logname}}/">{{logname}}</a></p>
+      <a href="/"><img class="insta-logo" src="/static/uploads/Instagram-2018-Logo-Vector.png"></a>
+      <p class="explore-user"> <a class="im-blue" href="/explore/">explore</a> | <a class="im-blue" href="/users/{{logname}}/">{{logname}}</a></p>
     </div>
 
-    <div class="Main-User-Profile">
-      <div class="Profile-username">
-        {{ username }}
-      </div>
+  <div class="Main-User-Profile">
+    <div class="Profile-Details">
+      <img class="user-profile-picture" src="/static/uploads/{{ user_profile_pic }}">     
+      <div> 
 
-      <div class="User-Relationships">
-        {% if username == logname %}
-          <a href="/accounts/edit">Edit Profile</a>
-        {% endif %}
+        <div class="edit-logout">      
 
-        {% if username != logname %}
-          {% if logname_follows_username %}
-            <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
-            <form action="/following/?target={{curr_path}}" method="post" enctype="multipart/form-data">
-              <input type="submit" name="unfollow" value="unfollow"/>
-              <input type="hidden" name="username" value="username"/>
-              <input type="hidden" name="operation" value="unfollow"/>
-            </form>       
+            <div class="Profile-username">
+            {{ username }}
+            </div>
+            {% if username != logname %}
+                {% if logname_follows_username %}
+                  <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
+                  <form action="/following/?target={{curr_path}}" method="post" enctype="multipart/form-data">
+                    <input class="unfollow-button"  type="submit" name="unfollow" value="unfollow"/>
+                    <input type="hidden" name="username" value="{{ username }}"/>
+                    <input  type="hidden" name="operation" value="unfollow"/>
+                  </form>       
 
-          {% else %}
-          <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
-          <form action="/following/?target={{curr_path}}" method="post" enctype="multipart/form-data">
-            <input type="submit" name="follow" value="follow"/>
-            <input type="hidden" name="username" value="username"/>
-            <input type="hidden" name="operation" value="follow"/>
-          </form>
-          
-          {% endif %}
-        {% else %}
-            <form action="/accounts/logout/" method="post" enctype="multipart/form-data">
-              <input type="submit" name="operation" value="logout"/>
-            </form>
-        {% endif %}    
-
-        {{ users_post_count }}  {{'posts' if users_post_count != 1 else 'post'}}
-        <div class="Follows">
-          <a href="/users/{{ username }}/followers/">{{ followers }} 
-            {% if followers != 1 %}
-              followers
-            {% else %}
-              follower
-            {% endif %}
-          </a>
-
-          <a href="/users/{{ username }}/following/">{{ following }}following</a>
+                {% else %}
+                <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
+                <form action="/following/?target={{curr_path}}" method="post" enctype="multipart/form-data">
+                  <input class="follow-button" type="submit" name="follow" value="follow"/>
+                  <input type="hidden" name="username" value="{{ username }}"/>
+                  <input type="hidden" name="operation" value="follow"/>
+                </form>
+                
+                {% endif %}
+              {% else %}
+              
+                <a href="/accounts/edit" style="font-weight: bold;">Edit Profile</a>
+                <form action="/accounts/" method="post" enctype="multipart/form-data">
+                  <input class="logout" type="submit" name="operation" value="logout"/>
+                </form>
+                
+            {% endif %}    
         </div>
-      </div>
-      <p>{{ fullname }}</p>
+        <div class="User-Relationships">
+          {{ posts }} {{'posts' if posts != 1 else 'post'}}
+
+          <div class="Follows">
+            <a class="Follows" href="/users/{{ username }}/followers/">{{ following }} 
+              {% if following != 1 %}
+                followers
+              {% else %}
+                follower
+              {% endif %}
+            </a>
+            |
+            <a class="Follows" href="/users/{{ username }}/following/">{{ followers }} following</a>
+            </div>
+        </div>
+        <p>{{ fullname }}</p>
       <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
-      <form action="/uploads/<filename>?target={{curr_path}}" method="post" enctype="multipart/form-data">
+      {% if username == logname %}
+      <form action="/posts/?target={{curr_path}}" method="post" enctype="multipart/form-data">
         <input type="file" name="file" accept="image/*" required/>
         <input type="submit" name="create_post" value="upload new post"/>
         <input type="hidden" name="operation" value="create"/>
       </form>
+      {% endif %}        
+      </div>
+      
+    </div>
 
-      {% for user_posted in posts %}
+
+
+      {% for user_posted in image_posts %}
       <a href="/posts/{{user_posted.postid}}/">
-        <img class="Users-Posted-Image" src="{{ user_posted.image_posts }}">
+        <img class="Users-Posted-Image" src="/static/uploads/{{ user_posted.img_url }}">
       </a>
       {% endfor %}
     </div>

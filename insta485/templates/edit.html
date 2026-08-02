@@ -2,20 +2,19 @@
 <html lang="en">
   <head>
     <title>insta485</title>
-    <link rel="stylesheet" href="/css/style.css/style.css">
+    <link rel="stylesheet" href="/static/css/style.css/style.css">
   </head>
   <body>
-
     <div class="Insta-Header">
-      <a href="/"><img class="insta-logo" src="/images/Instagram-2018-Logo-Vector.png" ></a>
-      <p class="explore-user"> <a href="/explore/index.html">explore</a> | <a href="/users/{{logname}}/">{{logname}}</a></p>
+      <a href="/"><img class="insta-logo" src="/static/uploads/Instagram-2018-Logo-Vector.png"></a>
+      <p class="explore-user"> <a class="im-blue" href="/explore/">explore</a> | <a class="im-blue" href="/users/{{logname}}/">{{logname}}</a></p>
     </div>
 
 
 
     <div>
     <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
-    <img class="user-profile" src="{{photo}}"> <p style="font-weight: bold;">{{logname}}</p>
+    <img class="user-profile" src="/static/uploads/{{photo}}"> <p style="font-weight: bold;">{{logname}}</p>
 
     <form action="/accounts/?target={{curr_path}}" method="post" enctype="multipart/form-data">
       Photo <input type="file" name="file" accept="image/*"/>

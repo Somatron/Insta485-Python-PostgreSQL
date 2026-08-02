@@ -2,31 +2,36 @@
 <html lang="en">
   <head>
     <title>insta485</title>
-    <link rel="stylesheet" href="/css/style.css/style.css">
+    <link rel="stylesheet" href="/static/css/style.css/style.css">
   </head>
   <body>
 
     <div class="Insta-Header">
-      <a href="/"><img class="insta-logo" src="/images/Instagram-2018-Logo-Vector.png" ></a>
+      <a href="/"><img class="insta-logo" src="/static/uploads/Instagram-2018-Logo-Vector.png" ></a>
       <p class="explore-user">login</p>
     </div>
 
-    <!-- DO NOT CHANGE THIS (aside from styling) -->
-    <form action="/accounts/?target=/" method="post" enctype="multipart/form-data">
-      Photo <input type="file" name="file" required/>
-      Name <input type="text" name="fullname" required/>
-      Username <input type="text" name="username" required/>
-      Email <input type="text" name="email" required/>
-      Password <input type="password" name="password" required/>
-      Sign up <input type="submit" name="signup" value="sign up"/>
-      <input type="hidden" name="operation" value="create"/>
-    </form>
+    <div class="create-page">
 
-    <div>
-      <p>
-      Have an account?<p style="font-weight: bold;"><a href="/accounts/login/"> Log In<a></p> 
-      </p>
-    </div>
-    
+      <div class="create-container">
+      <!-- DO NOT CHANGE THIS (aside from styling) -->
+      <form action="/accounts/?target=/" method="post" enctype="multipart/form-data">
+        Photo <input type="file" style="margin-bottom: 20px;" name="file" required/>
+        Name <input type="text"  class="User-Input" placeholder="Insert name" name="fullname" required/>
+        Username <input type="text"  class="User-Input" placeholder="Insert username"  name="username" required/>
+        Email <input type="text"  class="User-Input" placeholder="Insert email account" name="email" required/>
+        Password <input type="password"  class="User-Input" placeholder="Create a password"  name="password" required/>
+        <input type="submit" class="signup-button" name="signup" value="sign up"/>
+        <input type="hidden" name="operation" value="create"/>
+      </form>
+
+          <div>
+            <p>
+            Have an account?<p style="font-weight: bold;"><a href="/accounts/login/"> Log In<a></p> 
+            </p>
+          </div>
+
+      </div>
+    </div>  
   </body>
 </html>

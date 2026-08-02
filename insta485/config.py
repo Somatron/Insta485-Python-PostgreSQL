@@ -11,13 +11,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 APPLICATION_ROOT = '/'
 
 # Secret key for encrypting cookies
-SECRET_KEY = b'FIXME SET WITH: $ python3 -c "import os; print(os.urandom(24))" '
+SECRET_KEY = b'\xf6b\x94\xcc\xa7\xf7\x83\x8cq\xc9F\xb9\x1fo\xef\x97"\x87\x85a\x19\xa7\xfb\x83'
 SESSION_COOKIE_NAME = 'login'
 
 # File Upload to var/uploads/
 INSTA485_ROOT = pathlib.Path(__file__).resolve().parent.parent
-UPLOAD_FOLDER = INSTA485_ROOT/'var'/'uploads'
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+UPLOAD_FOLDER = INSTA485_ROOT/'insta485'/'static'/'uploads'
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'mp4', 'mov', 'avi'])
 MAX_CONTENT_LENGTH = 16 * 1024 * 1024
 
 # Database file is

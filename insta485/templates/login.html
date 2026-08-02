@@ -2,26 +2,34 @@
 <html lang="en">
   <head>
     <title>insta485</title>
-    <link rel="stylesheet" href="/css/style.css/style.css">
+    <link rel="stylesheet" href="/static/css/style.css/style.css">
   </head>
   <body>
 
     <div class="Insta-Header">
-      <a href="/"><img class="insta-logo" src="/images/Instagram-2018-Logo-Vector.png" ></a>
+      <a href="/"><img class="insta-logo" src="/static/uploads/Instagram-2018-Logo-Vector.png" ></a>
       <p class="explore-user">login</p>
     </div>
 
+  <div class="login-page">
+
+    <div class="login-container">
+    <p style="font-weight: bold; margin-bottom: 25px">Log into Instagram </p>      
     <form action="/accounts/?target=/" method="post" enctype="multipart/form-data">
-      <input type="text" name="username" placeholder="username" required/>
-      <input type="password" name="password" placeholder="password" required/>
-      <input type="submit" name="login" value="login"/>
-      <input type="hidden" name="operation" value="login"/>
+      <input type="text" class="User-Input" name="username" placeholder="username" required/>
+      <input type="password" class="User-Input"  name="password" placeholder="password" required/>
+      <input type="submit" class="login-button"  name="login" value="login"/>
+      <input type="hidden"name="operation" value="login"/>
     </form>
-    <div>
-      <p>
-      Don't have an account? <p style="font-weight: bold;"> <a href="/accounts/create/">Sign Up </a></p>
-      </p>
-    </div>
     
+      <p>
+      Don't have an account?</p> <p style="font-weight: bold;"> <a href="/accounts/create/">Sign Up </a></p>
+      
+      <!--
+            <p>
+      Don't have an account? <a style="font-weight: bold;" href="/accounts/create/">Sign Up </a> </p>
+      -->
+    </div>
+  </div>  
   </body>
 </html>
