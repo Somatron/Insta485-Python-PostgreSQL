@@ -277,7 +277,7 @@ def handle_account_actions():
       flask.abort(403)
     logname = flask.session['username']
     edit_account(logname, connect_db)
-    return flask.redirect(target)
+    return flask.redirect(flask.url_for('user_profile', username=logname))
 
   elif operation == 'update_password':
     if 'username' not in flask.session:
@@ -352,6 +352,7 @@ def edit_account(logname, connect_db):
   fullname = flask.request.form.get('fullname')
   email = flask.request.form.get('email')
   file_object = flask.request.files.get('file')
+  target = flask.request.args.get('target', f'/users/{logname}/')
 
   #unlock file object
   cur = connect_db.cursor()
@@ -380,6 +381,7 @@ def edit_account(logname, connect_db):
     cur.execute("UPDATE users SET fullname = %s, email = %s, filename = %s WHERE username = %s", (fullname, email, uuid_basename, logname))
 
   connect_db.commit()
+  return flask.redirect(target)
 
 def password_update(logname, connect_db):
   old_password = flask.request.form.get('password')

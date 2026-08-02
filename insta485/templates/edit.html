@@ -12,22 +12,30 @@
 
 
 
-    <div>
+  <div>
     <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
-    <img class="user-profile" src="/static/uploads/{{photo}}"> <p style="font-weight: bold;">{{logname}}</p>
 
-    <form action="/accounts/?target={{curr_path}}" method="post" enctype="multipart/form-data">
-      Photo <input type="file" name="file" accept="image/*"/>
-      Name <input type="text" name="fullname" value="{{fullname}}" required/>
-      Email <input type="text" name="email" value="{{email}}" required/>
-      <input type="submit" name="update" value="submit"/>
-      <input type="hidden" name="operation" value="edit_account"/>
-    </form>
 
-      <p style="font-weight: bold;"> <a href="/accounts/password/">Change password</a></p>
-      <p style="font-weight: bold;"> <a href="/accounts/delete/">Delete account</a></p>
+    <div>
 
+      <div class="edit-account-thing">
+      <img class="user-profile" src="/static/uploads/{{photo}}" style="margin-top: 40px;"> <p style="font-weight: bold;">{{logname}}        
+      <form action="/accounts/?target={{curr_path}}" method="post" enctype="multipart/form-data">
+        Photo <input type="file"  name="file" accept="image/*"/>
+        Name <input type="text" class="User-Input"  name="fullname" value="{{fullname}}" required/>
+        Email <input type="text" class="User-Input"  name="email" value="{{email}}" required/>
+        <input type="submit" name="update" class="submit-button" value="submit"/>
+        <input type="hidden" name="operation" value="edit_account"/>
+      </form>
+
+      <p style="font-weight: bold; margin-top: 40px;"> <a href="/accounts/password/">Change password</a></p>
+      <p style="font-weight: bold;"> <a href="/accounts/delete/">Delete account</a></p>      
+      </div>
+      
     </div>
+
+
+  </div>
     
   </body>
 </html>

@@ -423,26 +423,33 @@ body {
   
 }
 
-.login-container, .create-container {
+.login-container, .create-container, .edit-account-thing, .password-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
 }
 
-.login-container form {
+.login-container form, .edit-account-thing form {
   display: flex;
   flex-direction: column;
   gap: 10px;
   width: 20%;
 } 
 
-.create-container form {
+.create-container form, .password-container form {
   margin-top: 100px;
   display: flex;
   flex-direction: column;
   gap: 10px;
   width: 20%;
+}
+
+.delete-account {
+  margin: 120px 200px;
+    display: flex;
+  flex-direction: column;
+  gap: 25px;
 }
 
 .User-Input {
@@ -455,10 +462,10 @@ body {
 }
 
 .User-Input:focus, .User-Input:hover {
-  outline: 2px solid rgb(100, 112, 139);
+  outline: 2px solid rgb(67, 90, 143);
 }
 
-.login-button, .signup-button {
+.login-button, .signup-button, .submit-button {
   background-color: rgb(13, 108, 250);
   border: none;
   color: white;
@@ -469,12 +476,30 @@ body {
   border-radius: 20px;
 }
 
-.login-button:hover, .signup-button:hover {
+.login-button:hover, .signup-button:hover,  .submit-button:hover {
   background-color: rgb(43, 127, 252);
 }
 
-.login-button:active, .signup-button:active {
+.login-button:active, .signup-button:active,  .submit-button:active {
   opacity: 0.7;
 }
 
-/*CREATE ACCOUNT */
+/*DELETE ACCOUNT */
+.delete-button {
+  background-color: rgb(238, 26, 61);
+  border: 3px solid rgb(39, 41, 48);
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 10px 50px;
+  border-radius: 20px;
+}
+
+.delete-button:hover {
+  background-color: rgb(255, 41, 77);
+}
+
+.delete-button:active {
+  opacity: 0.7;
+}
