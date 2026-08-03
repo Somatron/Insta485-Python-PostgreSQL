@@ -575,3 +575,22 @@ body {
   margin-top: 12px;
   padding: 12px 0 0 0;
 }
+
+.delete-comment-button {
+  background-color: rgb(238, 26, 61);
+  border: 2px solid rgb(39, 41, 48);
+  color: white;
+  font-weight: bold;
+  font-size: 10px;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 20px;
+}
+
+.delete-comment-button:hover {
+  background-color: rgb(255, 41, 77);
+}
+
+.delete-comment-button:active {
+  opacity: 0.7;
+}

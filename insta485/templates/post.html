@@ -60,16 +60,17 @@
         <div class="comment-username">{{ unique_comment.owner }}</div>
         </a>
         <div class="comment-type">{{ unique_comment.text }}</div>
+        {% if unique_comment.owner == logname %}
+        <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
+        <form action="/comments/?target={{curr_path}}" method="post" enctype="multipart/form-data">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+          <input type="hidden" name="operation" value="delete"/>
+          <input type="hidden" name="commentid" value="{{unique_comment.commentid}}"/>
+          <input type="submit" name="uncomment" class="delete-button" value="delete"/>
+        </form>
+        {% endif %}      
       </div>
-      {% if unique_comment.owner == logname %}
-      <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
-      <form action="/comments/?target={{curr_path}}" method="post" enctype="multipart/form-data">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-        <input type="hidden" name="operation" value="delete"/>
-        <input type="hidden" name="commentid" value="{{unique_comment.commentid}}"/>
-        <input type="submit" name="uncomment" class="delete-button" value="delete"/>
-      </form>
-      {% endif %}
+
 
       {% endfor %}
 
