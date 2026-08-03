@@ -1,7 +1,7 @@
 BEGIN;
 
-SET session_replication_role = 'replica';
-SET session_replication_role = 'origin';
+--SET session_replication_role = 'replica';
+--SET session_replication_role = 'origin';
 --disable foreign keys check before dropping tables to prevent dependency conflicts
 
 
