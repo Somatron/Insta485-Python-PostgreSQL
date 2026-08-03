@@ -17,6 +17,7 @@ I started this project to learn about how to make Flask API calls using Python, 
 
 This project contains User Authentication, Uploading Photos, Shell Scripting with Databases, Form security  (Flask-WTForms) and overall design of Insta485 with the Postgres database. It mostly copies features from the core Instagram you use everyday. 
 
+![Display of me navigating through the Instagram page, uploading a photo, following users, liking and commenting on posts](example.gif)
 
 ## Credits
 
