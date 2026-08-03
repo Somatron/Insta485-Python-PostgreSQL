@@ -113,7 +113,7 @@ def show_individual_post(postid):
                "owner_img_url": post["owner_img_url"], 
                "post_image": post["img_friend"], 
                "owner": post["owner"], 
-               "user_pfp_pic": user_pfp_pic,
+               "user_pfp_pic": user_pfp_pic, 
                "timestamp": post["timestamp"], 
                "is_my_comment": post["logname_comment"], 
                "postid": postid, 
