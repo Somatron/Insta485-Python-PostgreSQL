@@ -75,6 +75,7 @@
 
       {% if owner == logname %}
       <form action="/posts/?target={{logname}}" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <input type="hidden" name="operation" value="delete"/>
         <input type="hidden" name="postid" value="{{ postid }}"/>
         <input type="submit" name="delete" value="delete this post"/>
