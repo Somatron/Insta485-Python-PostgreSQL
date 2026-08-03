@@ -12,9 +12,6 @@ Username: awdeorio
 Password: chickens (ALL LOWER CASE)
 <img width="1133" height="879" alt="image" src="https://github.com/user-attachments/assets/a413d8eb-d2a0-4f15-a48a-3287fb1ea3db" />
 
-
-![Instagram Home Page layout](/image/Markdown-mark.svg "This is a sample image.")
-
 ## (Made using Python & PostgreSQL)
 I started this project to learn about how to make Flask API calls using Python, but most importantly how to use a monolithic database like PostgreSQL.
 
