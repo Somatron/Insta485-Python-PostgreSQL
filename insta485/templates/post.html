@@ -66,13 +66,13 @@
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
           <input type="hidden" name="operation" value="delete"/>
           <input type="hidden" name="commentid" value="{{unique_comment.commentid}}"/>
-          <input type="submit" name="uncomment" class="delete-button" value="delete"/>
+          <input type="submit" name="uncomment" class="delete-comment-button" value="delete"/>
         </form>
         {% endif %}      
       </div>
-
-
       {% endfor %}
+
+      <time datetime="2026-07-20" class="date-stamp">{{timestamp}}</time>
 
       {% if owner == logname %}
       <form action="/posts/?target=/users/{{ logname }}/" method="post" enctype="multipart/form-data">
@@ -83,7 +83,7 @@
       </form>
       {% endif %}
 
-      <time datetime="2026-07-20" class="date-stamp">{{timestamp}}</time>
+
 
       <footer class="comment-post-container">
 

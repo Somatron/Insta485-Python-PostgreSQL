@@ -153,6 +153,8 @@ body {
   display: flex;
   padding-top: 10px;
   padding-bottom:10px;
+  justify-content: center;
+  align-items: center;
 }
 
 .comment-username {
@@ -579,6 +581,7 @@ body {
 .delete-comment-button {
   background-color: rgb(238, 26, 61);
   border: 2px solid rgb(39, 41, 48);
+  margin-left: 10px;
   color: white;
   font-weight: bold;
   font-size: 10px;
