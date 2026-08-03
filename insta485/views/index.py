@@ -80,7 +80,7 @@ def show_individual_post(postid):
     cur = connection.cursor()
     cur.execute(query, (postid,)) #dont forget to pass in as a tuple for databases to organize data
 
-    post_check = cur.fetchall() #grab current post we're on
+    post_check = cur.fetchone() #grab current post we're on
     if not post_check:
         flask.abort(404)
     post = post_check[0]

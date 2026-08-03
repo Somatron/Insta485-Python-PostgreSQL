@@ -66,7 +66,7 @@
       <form action="/comments/?target={{curr_path}}" method="post" enctype="multipart/form-data">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <input type="hidden" name="operation" value="delete"/>
-        <input type="hidden" name="commentid" value="{{is_my_comment}}"/>
+        <input type="hidden" name="commentid" value="{{unique_comment.commentid}}"/>
         <input type="submit" name="uncomment" value="delete"/>
       </form>
       {% endif %}
@@ -74,7 +74,7 @@
       {% endfor %}
 
       {% if owner == logname %}
-      <form action="/posts/?target={{logname}}" method="post" enctype="multipart/form-data">
+      <form action="/posts/?target=/users/{{logname}}" method="post" enctype="multipart/form-data">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <input type="hidden" name="operation" value="delete"/>
         <input type="hidden" name="postid" value="{{ postid }}"/>
