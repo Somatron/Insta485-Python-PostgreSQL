@@ -61,7 +61,7 @@
         </a>
         <div class="comment-type">{{ unique_comment.text }}</div>
       </div>
-      {% if is_my_comment %}
+      {% if is_my_comment == logname %}
       <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
       <form action="/comments/?target={{curr_path}}" method="post" enctype="multipart/form-data">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
