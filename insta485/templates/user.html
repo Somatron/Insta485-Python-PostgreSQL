@@ -24,6 +24,7 @@
                 {% if logname_follows_username %}
                   <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
                   <form action="/following/?target={{curr_path}}" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <input class="unfollow-button"  type="submit" name="unfollow" value="unfollow"/>
                     <input type="hidden" name="username" value="{{ username }}"/>
                     <input  type="hidden" name="operation" value="unfollow"/>
@@ -32,6 +33,7 @@
                 {% else %}
                 <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
                 <form action="/following/?target={{curr_path}}" method="post" enctype="multipart/form-data">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                   <input class="follow-button" type="submit" name="follow" value="follow"/>
                   <input type="hidden" name="username" value="{{ username }}"/>
                   <input type="hidden" name="operation" value="follow"/>
@@ -42,6 +44,7 @@
               
                 <a href="/accounts/edit" style="font-weight: bold;">Edit Profile</a>
                 <form action="/accounts/" method="post" enctype="multipart/form-data">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                   <input class="logout" type="submit" name="operation" value="logout"/>
                 </form>
                 
@@ -66,6 +69,7 @@
       <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
       {% if username == logname %}
       <form action="/posts/?target={{curr_path}}" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <input type="file" name="file" accept="image/*" required/>
         <input type="submit" name="create_post" value="upload new post"/>
         <input type="hidden" name="operation" value="create"/>

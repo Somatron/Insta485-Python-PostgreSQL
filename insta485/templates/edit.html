@@ -21,6 +21,7 @@
       <div class="edit-account-thing">
       <img class="user-profile" src="/static/uploads/{{photo}}" style="margin-top: 40px;"> <p style="font-weight: bold;">{{logname}}        
       <form action="/accounts/?target={{curr_path}}" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         Photo <input type="file"  name="file" accept="image/*"/>
         Name <input type="text" class="User-Input"  name="fullname" value="{{fullname}}" required/>
         Email <input type="text" class="User-Input"  name="email" value="{{email}}" required/>

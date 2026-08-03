@@ -1,9 +1,10 @@
 """Insta485 package initializer."""
 import flask
+from flask_wtf.csrf import CSRFProtect
 
 # app is a single object used by all the code modules in this package
 app = flask.Flask(__name__)  # pylint: disable=invalid-name
-
+CSRFProtect(app)
 # Read settings from config module (insta485/config.py)
 app.config.from_object('insta485.config')
 

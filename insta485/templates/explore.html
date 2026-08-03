@@ -21,6 +21,7 @@
         </p>
         <p class="relationship-status">
           <form action="/following/?target={{curr_path}}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             <input class="follow-button"  type="submit" name="follow" value="follow"/>
             <input type="hidden" name="username" value="{{ user_details.username }}"/>
             <input type="hidden" name="operation" value="follow"/>

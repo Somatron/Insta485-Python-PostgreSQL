@@ -103,13 +103,17 @@ def show_individual_post(postid):
     cur.execute("SELECT COUNT(*) AS unique_like FROM likes WHERE postid = %s AND owner = %s", (postid, logname, ))
     post["like_button"] = cur.fetchone()["unique_like"] #see if owner has liked the post or not, determines the like button
 
+    cur.execute("SELECT filename FROM users WHERE username = %s", (logname, ))
+    user_pfp_pic = cur.fetchall()[0]["filename"]
+
     context = {"logname": logname, 
                "post_likes": all_likes, 
-               "like_button": post["like_button"], 
+               "likes": post["like_button"], 
                "post_comments": comments, 
                "owner_img_url": post["owner_img_url"], 
                "post_image": post["img_friend"], 
                "owner": post["owner"], 
+               "user_pfp_pic": user_pfp_pic,
                "timestamp": post["timestamp"], 
                "is_my_comment": post["logname_comment"], 
                "postid": postid, 

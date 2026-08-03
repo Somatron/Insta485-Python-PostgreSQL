@@ -14,6 +14,7 @@
     <div class="delete-account">
       {{logname}}
       <form action="/accounts/?target=/accounts/create/" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <input type="submit"  name="delete" class="delete-button" value="ඞ confirm delete account"/>
         <input type="hidden" name="operation"  value="delete"/>
       </form>

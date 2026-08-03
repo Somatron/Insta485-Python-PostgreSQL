@@ -16,6 +16,7 @@
       <div class="create-container">
       <!-- DO NOT CHANGE THIS (aside from styling) -->
       <form action="/accounts/?target=/" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         Photo <input type="file" style="margin-bottom: 20px;" name="file" required/>
         Name <input type="text"  class="User-Input" placeholder="Insert name" name="fullname" required/>
         Username <input type="text"  class="User-Input" placeholder="Insert username"  name="username" required/>

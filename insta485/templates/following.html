@@ -25,6 +25,7 @@
               following 
               <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
             <form action="/following/?target={{curr_path}}" method="post" enctype="multipart/form-data">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
               <input class="unfollow-button"  type="submit" name="unfollow" value="unfollow"/>
               <input type="hidden" name="username" value="{{ user_details.username }}"/>
               <input type="hidden" name="operation" value="unfollow"/>
@@ -32,6 +33,7 @@
             {% else %}
               <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
             <form action="/following/?target={{curr_path}}" method="post" enctype="multipart/form-data">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
               <input class="follow-button"  type="submit" name="follow" value="follow"/>
               <input type="hidden" name="username" value="{{ user_details.username }}"/>
               <input type="hidden" name="operation" value="follow"/>

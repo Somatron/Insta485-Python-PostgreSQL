@@ -10,7 +10,9 @@
       <p class="explore-user"> <a class="im-blue" href="/explore/">explore</a> | <a class="im-blue" href="/users/{{logname}}/">{{logname}}</a></p>
     </div>
 
-    {% for section in posts %}
+  {% for section in posts %}
+
+  
     <div class="post">
       <header class="userpost">
         <div class="post-username">
@@ -34,12 +36,14 @@
           {% if section.user_liked %}
           <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
           <form action="/likes/?target={{curr_path}}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             <input type="hidden" name="operation" value="unlike"/>
             <input type="hidden" name="postid" value="{{ section.postid }}"/>
             <input class="like-button" type="submit" name="unlike" value="❤︎ {{section.likes}} {{'likes' if section.likes != 1 else 'like'}}"/>
           </form>
           {% else %}
           <form action="/likes/?target={{curr_path}}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             <input type="hidden" name="operation" value="like"/>
             <input type="hidden" name="postid" value="{{ section.postid }}"/>
             <input class="gray-like-button" type="submit" name="like" value="❤︎ {{section.likes}} {{'likes' if section.likes != 1 else 'like'}}"/>
@@ -70,6 +74,7 @@
         </a>
         <div class="comment-wrap">
           <form action="/comments/?target={{curr_path}}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             <input type="hidden" name="operation" value="create"/>
             <input type="hidden" name="postid" value="{{ section.postid }}"/>
 
@@ -83,7 +88,7 @@
       </footer>
 
     </div>
-    {% endfor %}
+  {% endfor %}
 
   </body>
 </html>

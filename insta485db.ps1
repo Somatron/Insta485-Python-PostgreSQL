@@ -1,6 +1,11 @@
 # insta485db.ps1
 # Stop execution on any error
 
+#HOW TO RUN THIS SCRIPT:
+#
+#.\insta485db.ps1
+#
+
 # Stop on errors
 # See https://vaneyckt.io/posts/safer_bash_scripts_with_set_euxo_pipefail/
 $ErrorActionPreference = "Stop"
@@ -11,7 +16,7 @@ $SQL_UPLOADS = "sql/uploads"
 
 # Add these lines:
 $env:PGUSER = "postgres"
-$env:PGPASSWORD = "1D0ll@rDVD"
+$env:PGPASSWORD = "rockchalk"
 
 #Sanity check command line options (tells us how to run the script)
 function Show-Usage {

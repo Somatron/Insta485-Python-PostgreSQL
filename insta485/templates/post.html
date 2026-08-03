@@ -10,61 +10,83 @@
       <p class="explore-user"> <a class="im-blue" href="/explore/">explore</a> | <a class="im-blue" href="/users/{{logname}}/">{{logname}}</a></p>
     </div>
 
-    <div class="Post-Details">
-      <img class="Post-Image-Details" src="/static/uploads/{{post_image}}">
-      <div class="userpost-Details">
-        <img class="user-profile-Details" src="/static/uploads/{{owner_img_url}}">
-        <p class="post-username-Details">
-          <a href="/users/{{owner}}/">{{owner}}</a>
-        </p>
-        <p class="post-time-Details">{{timestamp}}</p>      
+    <div class="indepth-post">
+      <div class="post-img-container">
+        <img class="post-image" src="/static/uploads/{{post_image}}">
       </div>
+    <div class="post-content-side"> 
+      <header class="short-userpath">
+        <div class="post-username">
+          <a href="/users/{{owner}}/">
+            <img class="user-profile" src="/static/uploads/{{owner_img_url}}"> 
+          </a>
+          <p class="post-username">
+            <a href="/users/{{owner}}/">{{owner}}</a>
+          </p>
+          <p class="post-time">{{timestamp}}</p>       
+        </div>
+      </header>
+
+
+
+      <div class="button-family">
+          {% if post_likes %}
+          <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
+          <form action="/likes/?target={{curr_path}}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            <input type="hidden" name="operation" value="unlike"/>
+            <input type="hidden" name="postid" value="{{ postid }}"/>
+            <input class="like-button" type="submit" name="unlike" value="❤︎ {{likes}} {{'likes' if likes != 1 else 'like'}}"/>
+          </form>
+          {% else %}
+          <form action="/likes/?target={{curr_path}}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            <input type="hidden" name="operation" value="like"/>
+            <input type="hidden" name="postid" value="{{ postid }}"/>
+            <input class="gray-like-button" type="submit" name="like" value="❤︎ {{likes}} {{'likes' if likes != 1 else 'like'}}"/>
+          </form>
+          {% endif %}
+          <a href="/posts/{{postid}}/">
+            <input type="hidden" name="postid" value="{{ postid }}"/>
+            <input class="comment-button" type="submit" name="comment" value="💬 3 comments"/>
+          </a>
+          
+      </div>
+
       
-      <p class="display-likes">{{post_likes}} {{'likes' if post_likes != 1 else 'like'}}</p>
-
-      {% if like_button %}
-      <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
-      <form action="/likes/?target={{curr_path}}" method="post" enctype="multipart/form-data">
-        <input type="hidden" name="operation" value="unlike"/>
-        <input type="hidden" name="postid" value="{{postid}}"/>
-        <input type="submit" name="unlike" value="unlike"/>
-      </form>
-      {% else %}
-      <form action="/likes/?target={{curr_path}}" method="post" enctype="multipart/form-data">
-        <input type="hidden" name="operation" value="like"/>
-        <input type="hidden" name="postid" value="{{postid}}"/>
-        <input type="submit" name="like" value="like"/>
-      </form>
-      {% endif %}
-
       {% for unique_comment in post_comments %}
-      <div class="user-comment-Details">
+      <div class="user-comment">
+        <a href="/users/{{unique_comment.owner}}/" class="username-color">
         <div class="comment-username">{{ unique_comment.owner }}</div>
+        </a>
         <div class="comment-type">{{ unique_comment.text }}</div>
       </div>
-
-        {% if is_my_comment %}
-          <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
-          <form action="/comments/?target={{curr_path}}" method="post" enctype="multipart/form-data">
-            <input type="hidden" name="operation" value="delete"/>
-            <input type="hidden" name="commentid" value="{{ unique_comment.commentid }}"/>
-            <input type="submit" name="uncomment" value="delete"/>
-          </form>
-        {% endif %}
-
       {% endfor %}
 
-      {% if owner == logname %}
-      <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') 
-       make sure when you press this delete button it redirects to the user profile-->
-      <form action="/posts/?target=/users/{{logname}}/" method="post" enctype="multipart/form-data">
-        <input type="hidden" name="operation" value="delete"/>
-        <input type="hidden" name="postid" value="{{postid}}"/>
-        <input type="submit" name="delete" value="delete this post"/>
-      </form>
-      {% endif %}
+      <time datetime="2026-07-20" class="date-stamp">{{timestamp}}</time>
+
+      <footer class="comment-post-container">
+
+        <div class="comment-details">
+        <a href="/users/{{logname}}/">
+          <img class="user-profile" src="/static/uploads/{{ user_pfp_pic }}">
+        </a>          
+          <form action="/comments/?target={{curr_path}}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            <input type="hidden" name="operation" value="create"/>
+            <input type="hidden" name="postid" value="{{ postid }}"/>
+
+            <input class="comment-length" type="text" placeholder="Add a comment..."  name="text" required/> 
+
+            <input type="submit" name="comment" class="post-button" value="Post">
+            
+          </form> 
+
+        </div>        
+      </footer>
 
 
+      </div>
     </div>
   </body>
 </html>
