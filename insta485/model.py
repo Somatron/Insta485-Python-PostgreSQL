@@ -14,6 +14,8 @@ def grab_db():
     https://flask.palletsprojects.com/en/1.0.x/appcontext/#storing-data
     """
     if 'psql_db' not in flask.g:
+        load_dotenv()
+        
         env_db_url = os.environ.get("POSTGRESQL_URL_CONNECTION")
         #get a proper postgreSQL connect URI from config or enviroment var
         db_url = insta485.app.config.get('DATABASE_URL', f"{env_db_url}")
