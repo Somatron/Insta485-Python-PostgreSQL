@@ -67,7 +67,7 @@
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <input type="hidden" name="operation" value="delete"/>
         <input type="hidden" name="commentid" value="{{unique_comment.commentid}}"/>
-        <input type="submit" name="uncomment" class="delete-button" value="delete"/>
+        <input type="submit" name="uncomment" value="delete"/>
       </form>
       {% endif %}
 
@@ -78,7 +78,7 @@
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <input type="hidden" name="operation" value="delete"/>
         <input type="hidden" name="postid" value="{{ postid }}"/>
-        <input type="submit" name="delete" class="delete-button" value="delete this post"/>
+        <input type="submit" name="delete" value="delete this post"/>
       </form>
       {% endif %}
 
