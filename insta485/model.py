@@ -4,6 +4,8 @@ import flask
 import insta485
 import psycopg
 from psycopg.rows import dict_row
+import os
+from dotenv import load_dotenv
 
 def grab_db():
     """Open a new database connection.
@@ -12,8 +14,11 @@ def grab_db():
     https://flask.palletsprojects.com/en/1.0.x/appcontext/#storing-data
     """
     if 'psql_db' not in flask.g:
+        load_dotenv()
+        
+        env_db_url = os.environ.get("POSTGRESQL_URL_CONNECTION")
         #get a proper postgreSQL connect URI from config or enviroment var
-        db_url = insta485.app.config.get('DATABASE_URL', "postgresql://postgres:rockchalk@localhost/insta485db")
+        db_url = insta485.app.config.get('DATABASE_URL', f"{env_db_url}")
         #dont FORGET .GET USES () not []
 
         #Connect and attack the built in dictionary row_factory
